@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
+import { processTitleMood } from "../services/geminiAI.jsx";
 
 export const NewsContext = createContext();
 
@@ -17,7 +18,16 @@ export const NewsProvider = ({ children }) => {
         const data = await response.json();
 
         if (response.ok) {
-          setNewsData(data.data);
+          const titles = data.data.map((article) => article.title);
+          console.log(titles);
+          const array_scores = await processTitleMood(titles);
+          const Array = data.data;
+          console.log(array_scores);
+          Array.forEach((obj, i) => {
+            obj.Mood = array_scores[i];
+          });
+          console.log(Array);
+          setNewsData(Array);
         } else {
           setError(data.error);
         }
