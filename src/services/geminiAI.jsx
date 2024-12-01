@@ -15,11 +15,12 @@ export async function processTitleMood(titles) {
   console.log("answer", answer);
   return JSON.parse(answer);
 }
-export async function changeMood(data) {
-  const prompt = `i will give you a title and a descreption. you need to 
-    make them both calmer, more empathetic and more positive - without loosing
+export async function changeMood(data, number) {
+  const prompt = `i will give you a title , descreption and a number. you need to 
+    make them both positive if the number is between 1-4, do it medium  if its 4-7 and if its between 7-10 do it aggressive - without loosing
     any of the important existing facts.  the title is: ${data.title}.
     The description is: ${data.description}.
+    The number is ${number}}
     Return the new value as a an object, with the format: {
         title: <new updated title here>,
         description: <new updated description here>

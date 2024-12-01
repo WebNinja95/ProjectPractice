@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Card from "./Card";
+import Card from "./Card.jsx";
 import { NewsContext } from "../contexts/NewsContext";
 
 export default function List() {
@@ -8,42 +8,32 @@ export default function List() {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    setCards(newsData); // Synchronize `cards` with `newsData`
+    setCards(newsData);
   }, [newsData]);
 
-  const handleMoodChange = (key, newMood) => {
+  const handleMoodChange = (key, updatedCard) => {
     setCards((prev) => {
-      const updatedCards = { ...prev };
-      const updatedCard = { ...updatedCards[key] };
+      const updatedCards = Object.assign({}, prev);
 
-      updatedCard.Mood = newMood;
+      updatedCards[key] = Object.assign({}, updatedCards[key]);
+      updatedCards[key].Mood = updatedCard.newMood;
+      updatedCards[key].title = updatedCard.title;
+      updatedCards[key].description = updatedCard.description;
 
-      if (newMood >= 1 && newMood < 4) {
-        updatedCard.title = `Positive: ${updatedCard.title}`;
-        updatedCard.description = `This article is now labeled as positive. ${updatedCard.description}`;
-      } else if (newMood >= 4 && newMood < 7) {
-        updatedCard.title = `Kind: ${updatedCard.title}`;
-        updatedCard.description = `This article is now labeled as kind. ${updatedCard.description}`;
-      } else if (newMood >= 7 && newMood <= 10) {
-        updatedCard.title = `Empathy: ${updatedCard.title}`;
-        updatedCard.description = `This article is now labeled as empathetic. ${updatedCard.description}`;
-      }
-
-      updatedCards[key] = updatedCard;
       return updatedCards;
     });
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="error">Error: {error}</div>;
   }
 
   return (
-    <div className="List-Cards">
+    <div className="list-cards">
       {Object.entries(cards).map(([key, card]) => (
         <div key={key} className="card-wrapper">
           <Card
@@ -54,7 +44,7 @@ export default function List() {
             source={card.source}
             description={card.description}
             mood={card.Mood}
-            onChangeMood={(newMood) => handleMoodChange(key, newMood)}
+            onChangeMood={(updatedCard) => handleMoodChange(key, updatedCard)}
           />
           <Link to={`/article/${key}`} state={{ card }} className="read-more">
             Read More
